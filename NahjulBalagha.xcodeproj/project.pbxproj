@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+objectVersion = 58;
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +27,8 @@
 		F508FB302E7F71CE0028FA82 /* NahjulBalagha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NahjulBalagha.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F508FB412E7F71D00028FA82 /* NahjulBalaghaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NahjulBalaghaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F508FB4B2E7F71D00028FA82 /* NahjulBalaghaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NahjulBalaghaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5C8B8092E827F190046857A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		F5C8B80A2E827F190046857A /* libswiftUIKit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftUIKit.tbd; path = usr/lib/swift/libswiftUIKit.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -91,6 +93,7 @@
 				F508FB322E7F71CE0028FA82 /* NahjulBalagha */,
 				F508FB442E7F71D00028FA82 /* NahjulBalaghaTests */,
 				F508FB4E2E7F71D00028FA82 /* NahjulBalaghaUITests */,
+				F5C8B8082E827F190046857A /* Frameworks */,
 				F508FB312E7F71CE0028FA82 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +106,15 @@
 				F508FB4B2E7F71D00028FA82 /* NahjulBalaghaUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F5C8B8082E827F190046857A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F5C8B80A2E827F190046857A /* libswiftUIKit.tbd */,
+				F5C8B8092E827F190046857A /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -208,7 +220,7 @@
 			);
 			mainGroup = F508FB272E7F71CE0028FA82;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+preferredProjectObjectVersion = 58;
 			productRefGroup = F508FB312E7F71CE0028FA82 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -291,15 +303,21 @@
 				CODE_SIGN_ENTITLEMENTS = NahjulBalagha/NahjulBalagha.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = NahjulBalagha/Assets.xcassets;
 				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NahjulBalagha/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PeakofELoquence;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -326,15 +344,21 @@
 				CODE_SIGN_ENTITLEMENTS = NahjulBalagha/NahjulBalagha.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = NahjulBalagha/Assets.xcassets;
 				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NahjulBalagha/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PeakofELoquence;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
