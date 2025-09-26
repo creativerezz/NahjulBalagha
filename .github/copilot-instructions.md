@@ -1,101 +1,51 @@
-# NahjulBalagha iOS App - AI Coding Instructions
-
+# NahjulBalagha iOS Repo · AI Guide
 ## Project Overview
 This is a SwiftUI-based iOS app for browsing and interacting with Nahj al-Balagha (Islamic literature). The app features AI-powered chat assistance, three main content sections (Sermons, Letters, Sayings), and a theming system.
 
+## Snapshot
+- SwiftUI iOS app in `NahjulBalagha/` with entry point `NahjulBalaghaApp.swift` wiring SwiftData storage and showing `ContentView`.
+- `ContentView.swift` hosts a six-tab `TabView` (Home, Sermons, Letters, Sayings, Search, Settings), each wrapped in its own `NavigationStack` to isolate navigation per tab.
+- The Home tab embeds AI chat (via `AIChatService`) and quick links into the three primary content sections.
+
 ## Architecture Patterns
+- `AIChatService.swift` switches between Apple Intelligence (`FoundationModels`), OpenRouter, and a local stub; availability gates every call, so observe `ai.availability` or `ai.isAvailable` before streaming.
+- Streaming responses arrive as `AsyncThrowingStream<AssistantTurn.PartialTurn>`; keep placeholder chat rows until the stream completes, mirroring the `messages` handling in `ContentView`.
+- AI tool calls surface through `AssistantTurn.Action`; call `makeToolEnabledSession` before streaming to wire navigation (`AppSection`) and dark-mode callbacks.
+- OpenRouter integration hangs off `OpenRouterConfig`; UserDefaults keys: `ai_provider`, `selected_model`, `openrouter_api_key`, `isDarkMode`.
 
-### AI Integration Strategy
-- **Primary AI Provider**: Apple's FoundationModels (on-device) via `#if canImport(FoundationModels)`
-- **Fallback Provider**: OpenRouter API for cloud LLMs (requires API key in UserDefaults)
-- **Local Stub**: Simple fallback for testing without network/AI
-- **Key Files**: `AIChatService.swift` - handles provider switching and streaming responses
-- **Pattern**: Uses `@Generable` structs with FoundationModels for structured AI outputs
+## UI & Styling
+- Global colors live in `Theme.swift` as `AppColors` built with `Color.dynamic(light:dark:)`; never hardcode colors inside views.
+- Card/list styling follows `SermonsView`, `LettersView`, and `SayingsView`: `.listStyle(.plain)`, `listRowBackground(AppColors.background)`, detail sheets via `.sheet(item:)`.
+- Section chips reuse views like `SermonCategoryChip` and `CategoryChip`; keep their spacing, chip fills, and toggle logic when adding filters.
 
-### Theme & Color System
-- **Central Theme File**: `Theme.swift` - defines `AppColors` struct with dynamic light/dark variants
-- **Pattern**: All colors use `Color.dynamic(light:dark:)` for automatic theme switching
-- **Usage**: Reference colors as `AppColors.background`, `AppColors.primary`, etc.
-- **Storage**: Dark mode preference stored in UserDefaults with key "isDarkMode"
+## Data & State
+- Content sections use static arrays defined in each `[Section]View`; new sample items should match existing struct shapes (`Sermon`, `Letter`, `Saying`).
+- SwiftData currently stores only `Item`; additional persistence should extend the schema in `NahjulBalaghaApp.swift`.
+- Theme/AI preferences rely on the UserDefaults keys above—ensure settings UI and service logic stay in sync.
 
-### Navigation Architecture
-- **Root**: TabView with NavigationStack wrapping each tab (ContentView.swift)
-- **Sections**: Home, Sermons, Letters, Sayings, Search, Settings
-- **Modal Pattern**: Uses `.sheet(item:)` for detail views and AI-triggered navigation
-- **Deep Linking**: AI can trigger section navigation via `AppSection` enum
+## AI Orchestration
+- Home chat seeds `messages` with an assistant greeting and uses a placeholder UUID while streaming; follow this to keep scroll positions stable.
+- `fallbackLocalHandling` covers offline navigation and theme toggles; update both the AI prompt strings and this method when adding commands.
+- `SettingsView` drives provider/model selection: call `aiService.setProvider` / `setModel` and refresh availability so the status indicator stays accurate.
 
-### Data Models
-- **SwiftData**: Uses `@Model` class `Item` (basic timestamp model for persistence)
-- **View Models**: Simple structs (Sermon, Letter, Saying) with Identifiable protocol
-- **Categories**: Enums for content categorization (SermonCategory, etc.)
-- **Pattern**: Static data arrays with generated content for demonstration
+## Workflows
+- Build/run locally with Xcode or from the CLI:
+	```bash
+	xcodebuild -scheme NahjulBalagha -destination "platform=iOS Simulator,name=iPhone 16" build
+	```
+- Tests use the Swift Testing package (`import Testing`); run them with
+	```bash
+	xcodebuild -scheme NahjulBalagha -destination "platform=iOS Simulator,name=iPhone 16" test
+	```
+	(`swift test` is not configured for this iOS target).
+- Guard all FoundationModels code with Swift conditional compilation using `canImport(FoundationModels)` so Mac builds without the framework succeed.
 
-## Development Workflow
+## Extending the App
+- To add a new content section, mirror `SermonsView.swift`: define a data model + category enum, provide chip filters, and present details via `.sheet(item:)`.
+- Keep search UX local—filter in-memory arrays using `localizedCaseInsensitiveContains`, as done in the existing views.
+- Adjust theming only in `Theme.swift`, then reuse `AppColors` tokens everywhere else; SwiftUI previews are already in place for quick verification.
 
-### Build Configuration
-- **Xcode Project**: `NahjulBalagha.xcodeproj` with schemes "NahjulBalagha" and "NahjulBalaghaProNext"
-- **Target Platform**: iOS with iPhone 16 simulator testing
-- **Dependencies**: SwiftUI, SwiftData, FoundationModels (conditional import)
-
-### Testing Setup
-- **Framework**: Swift Testing (not XCTest) - note `import Testing` in test files
-- **Test Files**: `NahjulBalaghaTests.swift` uses `@Test` attribute and `#expect(...)` assertions
-- **Pattern**: Write tests as functions with `@Test` attribute in struct
-
-### Code Organization
-```
-NahjulBalagha/
-├── NahjulBalaghaApp.swift     # Main app entry point, SwiftData setup
-├── ContentView.swift          # Root TabView, AI chat integration
-├── Theme.swift                # Centralized color/theme system
-├── AIChatService.swift        # AI provider management, streaming
-├── QuickOpenSection.swift     # App navigation enum
-├── [Section]View.swift        # Individual content views (Sermons, Letters, etc.)
-└── Item.swift                 # SwiftData model
-```
-
-## Key Conventions
-
-### AI Chat Integration
-- **Streaming Pattern**: Use `AsyncThrowingStream<PartialTurn, Error>` for AI responses
-- **Tool Calls**: AI can trigger app navigation via structured responses
-- **Provider Switching**: Check `availability` before using AI, graceful fallbacks
-- **Session Management**: Use `makeToolEnabledSession()` to provide UI callbacks
-
-### SwiftUI Patterns
-- **Card Design**: Consistent rounded rectangles with `AppColors.card` background
-- **List Styling**: Use `.listStyle(.plain)` with custom row backgrounds
-- **Search**: Implement `.searchable()` with local filtering patterns
-- **Category Chips**: Horizontal scrolling filter chips (see SermonCategoryChip)
-
-### State Management
-- **UserDefaults**: Used for AI provider, API keys, and theme preferences
-- **@State**: Local view state for search, selections, modal presentation
-- **@AppStorage**: For persistent settings like "isDarkMode"
-- **@StateObject**: For AI service and other observables
-
-## Critical Implementation Details
-
-### AI Provider Conditional Compilation
-```swift
-#if canImport(FoundationModels)
-// Apple Intelligence code
-#else
-// Fallback implementation
-#endif
-```
-
-### Color Theme Usage
-Always use `AppColors.*` constants, never hardcoded colors. Theme automatically adapts to system appearance.
-
-### Modal Navigation Pattern
-Use `.sheet(item: $binding)` with optional model types for AI-triggered navigation and detail views.
-
-### Content Filtering
-Implement search and category filtering in computed properties that filter base arrays using `localizedCaseInsensitiveContains()`.
-
-## File Modification Guidelines
-- **Theme Changes**: Modify only `Theme.swift` for color adjustments
-- **AI Behavior**: Modify `AIChatService.swift` for provider logic, prompts in ContentView for chat behavior
-- **New Content Types**: Follow Sermon pattern - create model struct, category enum, view with search/filter
-- **Testing**: Use Swift Testing framework with `@Test` functions and `#expect()` assertions
+## Implementation Guardrails
+- When changing OpenRouter behavior, update both the system instructions string inside `streamWithOpenRouter` and the JSON parsing block that expects `reply`, `action`, and `searchResults` fields.
+- Adding new `AppSection` cases requires updates to `QuickOpenSection.swift`, the Home quick links, and every AI action switch (FoundationModels, OpenRouter, and stub handlers).
+- Extend sample data rather than replacing it; downstream views assume several entries for layout demonstrations.
