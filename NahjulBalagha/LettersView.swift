@@ -118,6 +118,40 @@ struct LettersView: View {
     }
 }
 
+// MARK: - Components
+
+struct CategoryChip: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(AppColors.primary)
+                }
+                Text(title)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(isSelected ? AppColors.primary : AppColors.cardForeground)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(isSelected ? AppColors.primary.opacity(0.12) : AppColors.muted)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(isSelected ? AppColors.primary : .clear, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 // MARK: - Letter Row
 
 struct LetterRow: View {
@@ -549,3 +583,4 @@ private let sampleLetters: [Letter] = [
             .background(AppColors.background)
     }
 }
+

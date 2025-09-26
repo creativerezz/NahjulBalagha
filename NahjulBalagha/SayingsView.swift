@@ -126,6 +126,7 @@ struct SayingsView: View {
         .navigationTitle("Sayings")
         .navigationBarTitleDisplayMode(.large)
         .background(AppColors.background)
+        .tint(AppColors.accent)
         .sheet(item: $selectedSaying) { saying in
             SayingDetailView(
                 saying: saying,
@@ -251,6 +252,42 @@ struct SayingDetailView: View {
     @State private var fontSize: Double = 18
     @State private var showArabic = false
     
+    /// The rendered content of the SayingDetailView.
+    /// 
+    /// This property builds the full, scrollable detail experience for a single `Saying` inside a
+    /// `NavigationStack`, using the app's color palette and typography.
+    /// 
+    /// Layout and behavior:
+    /// - Displays a header with:
+    ///   - The ordinal label (“Saying N”).
+    ///   - A favorite toggle (heart icon) bound to `isFavorite` and `toggleFavorite`.
+    ///   - A category badge tinted according to the saying's `SayingCategory`.
+    ///   - The saying's topic as a prominent title.
+    /// - Presents the main “The Saying” section:
+    ///   - Shows either the English text or the Arabic text (if available), toggled by an “Arabic/English”
+    ///     button. The Arabic variant is right-aligned and slightly larger for readability.
+    ///   - Applies a serif font, italic styling for the English quote, and a soft, tinted background.
+    ///   - Supports user-adjustable font size via the toolbar menu, bound to `fontSize`.
+    /// - Optionally shows an “Explanation & Context” section when `explanation` is non-empty,
+    ///   with comfortable line spacing for long-form reading.
+    /// - Shows a “Related Topics” chip row derived from the saying’s category via `relatedTopics(for:)`.
+    /// 
+    /// Toolbar:
+    /// - “Close” button that dismisses the sheet using the environment’s `dismiss`.
+    /// - A Share action that exports a formatted quote (text-only) referencing the saying number.
+    /// - A “Font Size” menu offering small/medium/large/extra-large presets with smooth animation.
+    /// 
+    /// Styling:
+    /// - Uses `AppColors.background` as the base background and consistent foreground/accent colors
+    ///   throughout the hierarchy.
+    /// - Category tinting is provided by `categoryColor(for:)`.
+    /// 
+    /// Accessibility and interaction:
+    /// - Button targets are sized and spaced for comfortable tapping.
+    /// - Animated transitions when toggling Arabic/English and adjusting font size.
+    /// 
+    /// - SeeAlso: `categoryColor(for:)`, `relatedTopics(for:)`
+    /// - Returns: A view hierarchy presenting detailed information and controls for the provided `saying`.
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -390,6 +427,7 @@ struct SayingDetailView: View {
             .background(AppColors.background)
             .navigationTitle("Saying Details")
             .navigationBarTitleDisplayMode(.inline)
+            .tint(AppColors.accent)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Close") {
