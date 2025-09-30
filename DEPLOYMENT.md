@@ -1,6 +1,27 @@
 # TestFlight Deployment Guide
 
-This guide covers deploying NahjulBalagha to TestFlight using fastlane.
+This guide covers deploying NahjulBalagha to TestFlight using either fastlane or xcodebuild commands.
+
+## Quick Start
+
+**Option 1: Using xcodebuild script (Recommended)**
+```bash
+# First time: Store password in keychain
+xcrun altool --store-password-in-keychain-item "AC_PASSWORD" \
+  -u "your-apple-id@example.com" \
+  -p "your-app-specific-password"
+
+# Then deploy
+./build-and-upload.sh
+```
+
+**Option 2: Using fastlane**
+```bash
+bundle install
+bundle exec fastlane ios beta
+```
+
+See sections below for detailed setup.
 
 ## Prerequisites
 
@@ -83,9 +104,49 @@ bundle exec fastlane ios build_test
 bundle exec fastlane ios test
 ```
 
+## Using xcodebuild (No Ruby Required)
+
+### First Time Setup
+
+1. **Store App Store Connect password in keychain:**
+```bash
+xcrun altool --store-password-in-keychain-item "AC_PASSWORD" \
+  -u "your-apple-id@example.com" \
+  -p "your-app-specific-password"
+```
+
+Generate app-specific password at: https://appleid.apple.com
+
+2. **Update build script:**
+```bash
+nano build-and-upload.sh
+# Change APPLE_ID to your Apple ID email
+```
+
+### Deploy to TestFlight
+
+```bash
+./build-and-upload.sh
+```
+
+This script will:
+1. Clean previous builds
+2. Create archive
+3. Export IPA for App Store
+4. Upload to App Store Connect
+
+### Manual xcodebuild Commands
+
+See `XCODE_COMMANDS.md` for complete reference including:
+- Building for simulator/device
+- Running tests
+- Creating archives
+- Managing version/build numbers
+- Code signing
+
 ## Manual Xcode Deployment
 
-If you prefer using Xcode directly:
+If you prefer using Xcode GUI:
 
 1. Open `NahjulBalagha.xcodeproj` in Xcode
 2. Select "Any iOS Device" or a connected device as the target

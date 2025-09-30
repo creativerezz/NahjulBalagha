@@ -4,7 +4,8 @@
       "Bash(xcodebuild:*)",
       "Bash(git init:*)",
       "Bash(grep:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []

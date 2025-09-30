@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+private enum QuickOpenSection: String, Identifiable {
+    case sermons, letters, sayings
+    var id: String { rawValue }
+}
+
 struct ContentView: View {
     @State private var isDark: Bool = false
     @AppStorage("isDarkMode") private var storedDarkMode: Bool = false
@@ -61,7 +66,6 @@ struct ContentView: View {
             }
         }
         .tint(AppColors.primary)
-        .preferredColorScheme((isDark || storedDarkMode) ? .dark : .light)
     }
 }
 
@@ -76,7 +80,7 @@ private struct HomeScreen: View {
 
     @State private var searchResults: [String] = []
     @State private var isShowingSearchSheet: Bool = false
-    @State private var quickOpenSection: AppSection? = nil
+    @State private var quickOpenSection: QuickOpenSection? = nil
 
     private let allItems: [String] = (
         ["Sermon 1: The Nature of Wisdom",
@@ -208,7 +212,11 @@ private struct HomeScreen: View {
 
         Task { @MainActor in
             ai.makeToolEnabledSession(openHandler: { section in
-                quickOpenSection = section
+                switch section {
+                case .sermons: quickOpenSection = .sermons
+                case .letters: quickOpenSection = .letters
+                case .sayings: quickOpenSection = .sayings
+                }
             }, setDarkMode: { dark in
                 isDark = dark
                 UserDefaults.standard.set(dark, forKey: "isDarkMode")
@@ -429,3 +437,4 @@ private struct SectionCard: View {
 #Preview {
     ContentView()
 }
+

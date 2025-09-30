@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct PeakofEloquenceApp: App {
+    @AppStorage("isDarkMode") private var storedDarkMode: Bool = false
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -26,7 +28,11 @@ struct PeakofEloquenceApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(storedDarkMode ? .dark : .light)
         }
         .modelContainer(sharedModelContainer)
+        .windowStyle(.titleBar)
+        .windowToolbarStyle(.unified(showsTitle: false))
+        .windowBackground(storedDarkMode ? .ultraThinMaterial : .thickMaterial)
     }
 }

@@ -188,18 +188,21 @@ See `Content/README.md` for more details.
 ## Common Tasks
 
 ### Deploy to TestFlight
+
+**Using xcodebuild (no Ruby required):**
 ```bash
-# Full deployment with automatic build number increment
-bundle exec fastlane ios beta
-
-# Build only (no upload)
-bundle exec fastlane ios build_test
-
-# Run tests
-bundle exec fastlane ios test
+./build-and-upload.sh
 ```
 
-See `DEPLOYMENT.md` for setup instructions and troubleshooting.
+**Using fastlane:**
+```bash
+bundle exec fastlane ios beta
+```
+
+**Using Xcode:**
+- Product → Archive → Distribute App → App Store Connect
+
+See `DEPLOYMENT.md` for setup and `XCODE_COMMANDS.md` for complete xcodebuild reference.
 
 ### To change AI provider
 User changes it in SettingsView, which calls `AIChatService.setProvider(_:)`

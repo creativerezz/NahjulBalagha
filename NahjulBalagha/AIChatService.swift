@@ -2,6 +2,21 @@ import Foundation
 import SwiftUI
 import Combine
 
+// MARK: - App Section enum
+enum AppSection: Identifiable {
+    case sermons
+    case letters
+    case sayings
+    
+    var id: String {
+        switch self {
+        case .sermons: return "sermons"
+        case .letters: return "letters"
+        case .sayings: return "sayings"
+        }
+    }
+}
+
 #if canImport(FoundationModels)
 import FoundationModels
 
@@ -19,7 +34,7 @@ struct NBGeneratedTurn {
     @Guide(description: "Short list of relevant results", .count(3))
     var searchResults: [String]?
 }
-#endif
+    #endif // canImport(FoundationModels)
 
 // MARK: - AI Provider Configuration
 enum AIProvider: String, CaseIterable, Identifiable {

@@ -98,6 +98,10 @@ ModuleCache.noindex/
 CompilationCache.noindex/
 SDKStatCaches.noindex/
 SymbolCache.noindex/
+build/
+*.xcarchive
+*.ipa
+*.dSYM/
 
 # fastlane specific
 fastlane/report.xml
