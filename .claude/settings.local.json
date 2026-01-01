@@ -5,7 +5,11 @@
       "Bash(git init:*)",
       "Bash(grep:*)",
       "Bash(tree:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "Bash(awk:*)",
+      "mcp__desktop-commander__read_file",
+      "Bash(gh:*)"
     ],
     "deny": [],
     "ask": []
