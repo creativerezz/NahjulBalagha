@@ -20,66 +20,13 @@ enum SermonCategory: String, CaseIterable {
 }
 
 struct SermonsView: View {
+    @ObservedObject private var repository = ContentRepository.shared
     @State private var searchText = ""
     @State private var selectedCategory: SermonCategory? = nil
     @State private var selectedSermon: Sermon? = nil
 
-    private let sermons: [Sermon] = [
-        Sermon(
-            number: 1,
-            title: "The Creations of the Universe",
-            topic: "On the pursuit of knowledge and understanding",
-            excerpt: "He who has a thousand friends has not a friend to spare, and he who has one enemy will meet him everywhere.",
-            content: "This is the full content of the first sermon about wisdom and knowledge...",
-            category: .wisdom
-        ),
-        Sermon(
-            number: 2,
-            title: "Justice and Leadership",
-            topic: "On the responsibilities of rulers",
-            excerpt: "Justice is the cornerstone of leadership, and mercy its foundation.",
-            content: "The complete text of the sermon on justice and leadership...",
-            category: .justice
-        ),
-        Sermon(
-            number: 3,
-            title: "The Path of Righteousness",
-            topic: "On moral conduct and spiritual guidance",
-            excerpt: "The path of righteousness is narrow, but it leads to eternal peace.",
-            content: "Full sermon text about righteousness and moral conduct...",
-            category: .morality
-        ),
-        Sermon(
-            number: 4,
-            title: "Governance and Responsibility",
-            topic: "On the duties of those in authority",
-            excerpt: "Authority without justice is tyranny; justice without authority is powerless.",
-            content: "Complete sermon on governance and the responsibilities of leadership...",
-            category: .governance
-        ),
-        Sermon(
-            number: 5,
-            title: "Faith and Devotion",
-            topic: "On spiritual devotion and trust in Allah",
-            excerpt: "True faith is tested not in ease, but in hardship and adversity.",
-            content: "Full text of the sermon on faith, devotion, and trust in Allah...",
-            category: .faith
-        )
-    ] + (6...50).map { i in
-        let categories: [SermonCategory] = [.wisdom, .justice, .leadership, .faith, .governance, .morality]
-        let category = categories[i % categories.count]
-        return Sermon(
-            number: i,
-            title: "Sermon \(i): \(category.rawValue) and Guidance",
-            topic: "On \(category.rawValue.lowercased()) and spiritual matters",
-            excerpt: "An excerpt from sermon \(i) discussing \(category.rawValue.lowercased()) and related matters.",
-            content: "This is the full content of sermon number \(i)...",
-            category: category
-        )
-    }
-
     private var filteredSermons: [Sermon] {
-        var filtered = sermons
+        var filtered = repository.sermons
 
         if let selectedCategory = selectedCategory {
             filtered = filtered.filter { $0.category == selectedCategory }
@@ -213,37 +160,226 @@ struct SermonRow: View {
 }
 
 struct SermonDetailView: View {
-    let sermon: Sermon
+    @State private var sermon: Sermon
+    @Environment(\.dismiss) private var dismiss
+    @State private var fontSize: Double = 16
+    @ObservedObject private var repository = ContentRepository.shared
+
+    init(sermon: Sermon) {
+        _sermon = State(initialValue: sermon)
+    }
+
+    private var currentIndex: Int? {
+        repository.sermons.firstIndex(where: { $0.number == sermon.number })
+    }
+
+    private var canGoNext: Bool {
+        guard let index = currentIndex else { return false }
+        return index < repository.sermons.count - 1
+    }
+
+    private var canGoPrevious: Bool {
+        guard let index = currentIndex else { return false }
+        return index > 0
+    }
+
+    private func goToNext() {
+        guard let index = currentIndex, canGoNext else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            sermon = repository.sermons[index + 1]
+        }
+    }
+
+    private func goToPrevious() {
+        guard let index = currentIndex, canGoPrevious else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            sermon = repository.sermons[index - 1]
+        }
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Sermon \(sermon.number)")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(AppColors.primary)
+                VStack(alignment: .leading, spacing: 24) {
+                    // Header
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Sermon \(sermon.number)")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(AppColors.primary)
+
+                            Spacer()
+
+                            // Category Badge
+                            Text(sermon.category.rawValue)
+                                .font(.caption.weight(.medium))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .fill(categoryColor(for: sermon.category).opacity(0.15))
+                                )
+                                .foregroundStyle(categoryColor(for: sermon.category))
+                        }
 
                         Text(sermon.title)
-                            .font(.title.weight(.semibold))
-                            .foregroundStyle(AppColors.foreground)
+                            .font(.title2.weight(.bold))
+                            .foregroundStyle(AppColors.cardForeground)
 
-                        Text(sermon.topic)
-                            .font(.subheadline)
-                            .foregroundStyle(AppColors.mutedForeground)
-                            .italic()
+                        // Topic Card
+                        HStack(spacing: 12) {
+                            Image(systemName: "text.quote")
+                                .font(.title3)
+                                .foregroundStyle(AppColors.secondary)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Topic")
+                                    .font(.caption)
+                                    .foregroundStyle(AppColors.mutedForeground)
+                                Text(sermon.topic)
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(AppColors.cardForeground)
+                            }
+
+                            Spacer()
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(AppColors.muted)
+                        )
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
 
-                    Text(sermon.content)
-                        .font(.body)
-                        .foregroundStyle(AppColors.foreground)
-                        .multilineTextAlignment(.leading)
+                    Divider()
+                        .padding(.horizontal, 20)
+
+                    // Content
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Key Passage
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Key Passage")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(AppColors.cardForeground)
+
+                            Text(sermon.excerpt)
+                                .font(.system(size: fontSize, weight: .medium, design: .serif))
+                                .foregroundStyle(AppColors.primary)
+                                .italic()
+                                .lineSpacing(4)
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .fill(AppColors.primary.opacity(0.05))
+                                )
+                        }
+
+                        // Full Sermon
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Full Sermon")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(AppColors.cardForeground)
+
+                            Text(sermon.content)
+                                .font(.system(size: fontSize, design: .serif))
+                                .foregroundStyle(AppColors.foreground)
+                                .lineSpacing(6)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+
+                    // Navigation Hint
+                    HStack {
+                        if canGoPrevious {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                Text("Previous")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(AppColors.mutedForeground)
+                        }
+
+                        Spacer()
+
+                        if canGoNext {
+                            HStack(spacing: 4) {
+                                Text("Next")
+                                Image(systemName: "chevron.right")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(AppColors.mutedForeground)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+
+                    Spacer(minLength: 40)
                 }
-                .padding(24)
             }
             .background(AppColors.background)
-            .navigationTitle("Sermon Details")
+            .gesture(
+                DragGesture(minimumDistance: 50)
+                    .onEnded { value in
+                        let horizontal = value.translation.width
+                        let vertical = value.translation.height
+
+                        // Only respond to horizontal swipes
+                        if abs(horizontal) > abs(vertical) {
+                            if horizontal < 0 && canGoNext {
+                                // Swipe left -> next
+                                goToNext()
+                            } else if horizontal > 0 && canGoPrevious {
+                                // Swipe right -> previous
+                                goToPrevious()
+                            }
+                        }
+                    }
+            )
+            .navigationTitle("Sermon \(sermon.number)")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    ShareLink(item: "\(sermon.title)\n\n\"\(sermon.excerpt)\"\n\n- Sermon \(sermon.number) from Nahj al-Balagha") {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+
+                    Menu {
+                        Section("Font Size") {
+                            Button("Small") { withAnimation { fontSize = 14 } }
+                            Button("Medium") { withAnimation { fontSize = 16 } }
+                            Button("Large") { withAnimation { fontSize = 18 } }
+                            Button("Extra Large") { withAnimation { fontSize = 20 } }
+                        }
+                    } label: {
+                        Image(systemName: "textformat.size")
+                    }
+                }
+            }
+        }
+    }
+
+    private func categoryColor(for category: SermonCategory) -> Color {
+        switch category {
+        case .wisdom:
+            return AppColors.primary
+        case .justice:
+            return AppColors.destructive
+        case .leadership:
+            return AppColors.secondary
+        case .faith:
+            return AppColors.chart1
+        case .governance:
+            return AppColors.chart2
+        case .morality:
+            return AppColors.chart3
         }
     }
 }

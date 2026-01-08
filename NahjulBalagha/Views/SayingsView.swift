@@ -26,15 +26,14 @@ enum SayingCategory: String, CaseIterable {
 // MARK: - Main View
 
 struct SayingsView: View {
+    @ObservedObject private var repository = ContentRepository.shared
     @State private var searchText = ""
     @State private var selectedCategory: SayingCategory? = nil
     @State private var selectedSaying: Saying? = nil
     @State private var favorites: Set<UUID> = []
     
-    private let sayings: [Saying] = sampleSayings
-    
     private var filteredSayings: [Saying] {
-        var filtered = sayings
+        var filtered = repository.sayings
         
         // Filter by category if selected
         if let selectedCategory = selectedCategory {
@@ -130,16 +129,7 @@ struct SayingsView: View {
         .sheet(item: $selectedSaying) { saying in
             SayingDetailView(
                 saying: saying,
-                isFavorite: favorites.contains(saying.id),
-                toggleFavorite: {
-                    withAnimation {
-                        if favorites.contains(saying.id) {
-                            favorites.remove(saying.id)
-                        } else {
-                            favorites.insert(saying.id)
-                        }
-                    }
-                }
+                favorites: $favorites
             )
         }
     }
@@ -245,12 +235,67 @@ struct SayingRow: View {
 // MARK: - Saying Detail View
 
 struct SayingDetailView: View {
-    let saying: Saying
-    let isFavorite: Bool
-    let toggleFavorite: () -> Void
+    @State private var saying: Saying
+    @Binding var favorites: Set<UUID>
     @Environment(\.dismiss) private var dismiss
     @State private var fontSize: Double = 18
     @State private var showArabic = false
+    @ObservedObject private var repository = ContentRepository.shared
+
+    init(saying: Saying, isFavorite: Bool, toggleFavorite: @escaping () -> Void) {
+        // Legacy init for compatibility - converts to new binding style
+        _saying = State(initialValue: saying)
+        _favorites = .constant(isFavorite ? [saying.id] : [])
+    }
+
+    init(saying: Saying, favorites: Binding<Set<UUID>>) {
+        _saying = State(initialValue: saying)
+        _favorites = favorites
+    }
+
+    private var isFavorite: Bool {
+        favorites.contains(saying.id)
+    }
+
+    private func toggleFavorite() {
+        withAnimation(.spring(response: 0.3)) {
+            if favorites.contains(saying.id) {
+                favorites.remove(saying.id)
+            } else {
+                favorites.insert(saying.id)
+            }
+        }
+    }
+
+    private var currentIndex: Int? {
+        repository.sayings.firstIndex(where: { $0.number == saying.number })
+    }
+
+    private var canGoNext: Bool {
+        guard let index = currentIndex else { return false }
+        return index < repository.sayings.count - 1
+    }
+
+    private var canGoPrevious: Bool {
+        guard let index = currentIndex else { return false }
+        return index > 0
+    }
+
+    private func goToNext() {
+        guard let index = currentIndex, canGoNext else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            saying = repository.sayings[index + 1]
+            showArabic = false
+        }
+    }
+
+    private func goToPrevious() {
+        guard let index = currentIndex, canGoPrevious else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            saying = repository.sayings[index - 1]
+            showArabic = false
+        }
+    }
     
     /// The rendered content of the SayingDetailView.
     /// 
@@ -403,7 +448,7 @@ struct SayingDetailView: View {
                             Text("Related Topics")
                                 .font(.headline.weight(.semibold))
                                 .foregroundStyle(AppColors.cardForeground)
-                            
+
                             HStack {
                                 ForEach(relatedTopics(for: saying), id: \.self) { topic in
                                     Text(topic)
@@ -420,12 +465,52 @@ struct SayingDetailView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    
+
+                    // Navigation Hint
+                    HStack {
+                        if canGoPrevious {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                Text("Previous")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(AppColors.mutedForeground)
+                        }
+
+                        Spacer()
+
+                        if canGoNext {
+                            HStack(spacing: 4) {
+                                Text("Next")
+                                Image(systemName: "chevron.right")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(AppColors.mutedForeground)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+
                     Spacer(minLength: 40)
                 }
             }
             .background(AppColors.background)
-            .navigationTitle("Saying Details")
+            .gesture(
+                DragGesture(minimumDistance: 50)
+                    .onEnded { value in
+                        let horizontal = value.translation.width
+                        let vertical = value.translation.height
+
+                        if abs(horizontal) > abs(vertical) {
+                            if horizontal < 0 && canGoNext {
+                                goToNext()
+                            } else if horizontal > 0 && canGoPrevious {
+                                goToPrevious()
+                            }
+                        }
+                    }
+            )
+            .navigationTitle("Saying \(saying.number)")
             .navigationBarTitleDisplayMode(.inline)
             .tint(AppColors.accent)
             .toolbar {
@@ -503,214 +588,10 @@ struct SayingDetailView: View {
     }
 }
 
-// MARK: - Sample Data
-
-private let sampleSayings: [Saying] = [
-    Saying(
-        number: 1,
-        text: "During civil disturbance be like an adolescent camel who has neither a back strong enough for riding nor udders for milking.",
-        topic: "On remaining neutral in conflicts",
-        explanation: "This saying advises neutrality during times of civil unrest. Just as a young camel is not yet useful for riding or milking, one should not be of use to either side in a conflict that divides the community. This promotes peace and prevents fueling division.",
-        category: .wisdom,
-        arabicText: "كُنْ فِي الْفِتْنَةِ كَابْنِ اللَّبُونِ لَا ظَهْرٌ فَيُرْكَبَ وَلَا ضَرْعٌ فَيُحْلَبَ"
-    ),
-    Saying(
-        number: 2,
-        text: "He who adopts greed as a habit devalues himself; he who discloses his hardship agrees to humiliation; and he who allows his tongue to overpower his soul debases the soul.",
-        topic: "On greed, complaints, and speech",
-        explanation: "This profound saying warns against three character flaws: greed diminishes one's dignity, constantly complaining about difficulties invites humiliation, and letting the tongue speak without restraint degrades one's spiritual essence.",
-        category: .character,
-        arabicText: nil
-    ),
-    Saying(
-        number: 3,
-        text: "Miserliness is the companion of poverty; cowardice is the companion of destitution; and poverty often deprives an intelligent man of his argument.",
-        topic: "On poverty and its effects",
-        explanation: "This saying explores the relationship between material and spiritual poverty. Miserliness leads to poverty of spirit, cowardice to moral bankruptcy, and material poverty can prevent even the wisest from being heard.",
-        category: .worldly,
-        arabicText: nil
-    ),
-    Saying(
-        number: 4,
-        text: "One who fights for a cause not his own is not intelligent.",
-        topic: "On choosing battles wisely",
-        explanation: "This teaches discernment in conflict. Fighting for causes that don't align with one's principles or that don't genuinely concern one's welfare or values demonstrates a lack of wisdom.",
-        category: .wisdom,
-        arabicText: nil
-    ),
-    Saying(
-        number: 5,
-        text: "Knowledge is better than wealth. Knowledge guards you, while you have to guard wealth. Wealth decreases by spending, while knowledge multiplies by spending.",
-        topic: "The superiority of knowledge over wealth",
-        explanation: "This famous saying establishes the supremacy of knowledge over material wealth. Knowledge protects its possessor from ignorance and error, while wealth requires constant protection. When shared, knowledge grows while wealth diminishes.",
-        category: .knowledge,
-        arabicText: "الْعِلْمُ خَيْرٌ مِنَ الْمَالِ، الْعِلْمُ يَحْرُسُكَ وَأَنْتَ تَحْرُسُ الْمَالَ"
-    ),
-    Saying(
-        number: 6,
-        text: "Patience is of two kinds: patience over what pains you, and patience against what you covet.",
-        topic: "The two types of patience",
-        explanation: "This distinguishes between enduring hardship (patience in adversity) and resisting temptation (patience in prosperity). Both forms of patience are essential for spiritual development.",
-        category: .patience,
-        arabicText: "الصَّبْرُ صَبْرَانِ: صَبْرٌ عَلَى مَا تَكْرَهُ، وَصَبْرٌ عَمَّا تُحِبُّ"
-    ),
-    Saying(
-        number: 7,
-        text: "The tongue is a beast; if it is let loose, it devours.",
-        topic: "On controlling speech",
-        explanation: "This metaphor warns about the destructive power of uncontrolled speech. Like a wild beast, the tongue can cause immense harm if not properly restrained through wisdom and self-control.",
-        category: .morality,
-        arabicText: nil
-    ),
-    Saying(
-        number: 8,
-        text: "Woman is a scorpion whose grip is sweet.",
-        topic: "On temptation and desire",
-        explanation: "This metaphorical saying warns about the dual nature of temptation - it may seem pleasant initially but can lead to harmful consequences if one is not careful and mindful.",
-        category: .worldly,
-        arabicText: nil
-    ),
-    Saying(
-        number: 9,
-        text: "If you are greeted, return the greetings more warmly. If you are favored, return the favor manifold; but he who takes the initiative will always excel in merit.",
-        topic: "On reciprocating goodness",
-        explanation: "This teaches the ethics of social interaction: respond to kindness with greater kindness, but recognize that initiating good deeds holds the highest merit.",
-        category: .morality,
-        arabicText: nil
-    ),
-    Saying(
-        number: 10,
-        text: "The worth of every man is in his attainments.",
-        topic: "On human worth and achievement",
-        explanation: "This saying emphasizes that a person's true value lies not in lineage, wealth, or status, but in what they have learned, accomplished, and contributed to society.",
-        category: .knowledge,
-        arabicText: "قِيمَةُ كُلِّ امْرِئٍ مَا يُحْسِنُهُ"
-    ),
-    Saying(
-        number: 11,
-        text: "I wonder at the man who loses hope of salvation when the door of repentance is open for him.",
-        topic: "On hope and repentance",
-        explanation: "This expresses amazement at those who despair when God's mercy is always available through sincere repentance. It encourages maintaining hope even after mistakes.",
-        category: .faith,
-        arabicText: nil
-    ),
-    Saying(
-        number: 12,
-        text: "Generosity is that which is by one's own initiative, because giving on request is either out of self-respect or to avoid rebuke.",
-        topic: "True generosity",
-        explanation: "Real generosity comes from the heart without being asked. When one gives only upon request, it may be motivated by shame or fear of criticism rather than genuine kindness.",
-        category: .character,
-        arabicText: nil
-    ),
-    Saying(
-        number: 13,
-        text: "There is no wealth like wisdom, no destitution like ignorance, no inheritance like refinement, and no support like consultation.",
-        topic: "Four invaluable treasures",
-        explanation: "This saying identifies four invaluable assets: wisdom as the greatest wealth, ignorance as the worst poverty, good character as the best inheritance, and consultation as the strongest support.",
-        category: .wisdom,
-        arabicText: nil
-    ),
-    Saying(
-        number: 14,
-        text: "Patience is of two kinds: patience over what pains you, and patience against what you covet.",
-        topic: "On types of patience",
-        explanation: "This distinguishes between enduring hardship (patience in adversity) and resisting temptation (patience against desires). Both require strength and self-control.",
-        category: .patience,
-        arabicText: nil
-    ),
-    Saying(
-        number: 15,
-        text: "Wealth converts a strange land into homeland and poverty turns a native place into a strange land.",
-        topic: "The effect of wealth and poverty",
-        explanation: "This observation on human nature shows how material conditions affect one's sense of belonging. Wealth can make one feel at home anywhere, while poverty can alienate one from their birthplace.",
-        category: .worldly,
-        arabicText: nil
-    ),
-    Saying(
-        number: 16,
-        text: "Contentment is the capital which will never diminish.",
-        topic: "The value of contentment",
-        explanation: "Contentment with what one has is described as an inexhaustible treasure. Unlike material wealth, satisfaction and gratitude provide lasting richness that cannot be depleted.",
-        category: .character,
-        arabicText: "الْقَنَاعَةُ مَالٌ لَا يَنْفَدُ"
-    ),
-    Saying(
-        number: 17,
-        text: "Every breath you take is a step towards death.",
-        topic: "On mortality and time",
-        explanation: "This stark reminder of mortality encourages mindfulness about the finite nature of life. Each moment brings us closer to our end, making every breath precious.",
-        category: .wisdom,
-        arabicText: nil
-    ),
-    Saying(
-        number: 18,
-        text: "The sin which makes you sad and repentant is more liked by Allah than the good deed which turns you arrogant.",
-        topic: "Humility versus arrogance",
-        explanation: "This profound spiritual insight shows that sincere repentance after sin is better than acts of worship that lead to pride. Humility is more valuable than corrupted virtue.",
-        category: .faith,
-        arabicText: nil
-    ),
-    Saying(
-        number: 19,
-        text: "The value of a man is according to his courage, his truthfulness is according to his balance of temper, his valour is according to his self-respect, and his chastity is according to his sense of shame.",
-        topic: "Measures of character",
-        explanation: "This saying provides metrics for evaluating character: courage determines worth, emotional balance indicates honesty, self-respect drives valor, and shame protects chastity.",
-        category: .character,
-        arabicText: nil
-    ),
-    Saying(
-        number: 20,
-        text: "Success is the result of foresight and resolution, foresight depends upon deep thinking and planning, and the most important factor of planning is to keep your secrets to yourself.",
-        topic: "The path to success",
-        explanation: "This outlines a strategic approach to success: it requires vision and determination, which come from careful thought and planning, and discretion is essential to effective planning.",
-        category: .wisdom,
-        arabicText: nil
-    ),
-    Saying(
-        number: 21,
-        text: "Be afraid of the sin which you commit in solitude, when the witness is also the judge.",
-        topic: "On private sins",
-        explanation: "This warns about sins committed in privacy, reminding that God is both witness and judge. Private conduct reveals true character more than public behavior.",
-        category: .faith,
-        arabicText: nil
-    ),
-    Saying(
-        number: 22,
-        text: "The one who has no control over his desires has no control over his mind.",
-        topic: "Self-control and wisdom",
-        explanation: "This establishes the link between controlling desires and mental clarity. Without mastery over wants and impulses, one cannot achieve true wisdom or sound judgment.",
-        category: .character,
-        arabicText: nil
-    ),
-    Saying(
-        number: 23,
-        text: "Meet people in such a manner that if you die, they should weep for you, and if you live, they should long for you.",
-        topic: "On treating people well",
-        explanation: "This beautiful advice on human relations suggests living with such kindness and value that your absence would be mourned and your presence cherished.",
-        category: .morality,
-        arabicText: nil
-    ),
-    Saying(
-        number: 24,
-        text: "When you gain power over your adversary, pardon him by way of thanks for being able to overpower him.",
-        topic: "Mercy in victory",
-        explanation: "This noble principle advocates showing mercy when victorious as gratitude for success. True strength is demonstrated through forgiveness, not revenge.",
-        category: .justice,
-        arabicText: nil
-    ),
-    Saying(
-        number: 25,
-        text: "The most helpless of all men is he who cannot find a few brothers during his life, and still more helpless is he who finds such brothers but loses them.",
-        topic: "The value of friendship",
-        explanation: "This highlights the importance of genuine friendships. Those unable to make true friends are pitiful, but even more tragic is losing friends through one's own actions.",
-        category: .morality,
-        arabicText: nil
-    )
-]
-
 #Preview {
     NavigationStack {
         SayingsView()
             .background(AppColors.background)
     }
 }
+

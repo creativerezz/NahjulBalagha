@@ -26,14 +26,13 @@ enum LetterCategory: String, CaseIterable {
 // MARK: - Main View
 
 struct LettersView: View {
+    @ObservedObject private var repository = ContentRepository.shared
     @State private var searchText = ""
     @State private var selectedCategory: LetterCategory? = nil
     @State private var selectedLetter: Letter? = nil
     
-    private let letters: [Letter] = sampleLetters
-    
     private var filteredLetters: [Letter] {
-        var filtered = letters
+        var filtered = repository.letters
         
         // Filter by category if selected
         if let selectedCategory = selectedCategory {
@@ -236,10 +235,43 @@ struct LetterRow: View {
 // MARK: - Letter Detail View
 
 struct LetterDetailView: View {
-    let letter: Letter
+    @State private var letter: Letter
     @Environment(\.dismiss) private var dismiss
     @State private var fontSize: Double = 16
-    
+    @ObservedObject private var repository = ContentRepository.shared
+
+    init(letter: Letter) {
+        _letter = State(initialValue: letter)
+    }
+
+    private var currentIndex: Int? {
+        repository.letters.firstIndex(where: { $0.number == letter.number })
+    }
+
+    private var canGoNext: Bool {
+        guard let index = currentIndex else { return false }
+        return index < repository.letters.count - 1
+    }
+
+    private var canGoPrevious: Bool {
+        guard let index = currentIndex else { return false }
+        return index > 0
+    }
+
+    private func goToNext() {
+        guard let index = currentIndex, canGoNext else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            letter = repository.letters[index + 1]
+        }
+    }
+
+    private func goToPrevious() {
+        guard let index = currentIndex, canGoPrevious else { return }
+        withAnimation(.easeInOut(duration: 0.3)) {
+            letter = repository.letters[index - 1]
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -342,12 +374,52 @@ struct LetterDetailView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    
+
+                    // Navigation Hint
+                    HStack {
+                        if canGoPrevious {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                Text("Previous")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(AppColors.mutedForeground)
+                        }
+
+                        Spacer()
+
+                        if canGoNext {
+                            HStack(spacing: 4) {
+                                Text("Next")
+                                Image(systemName: "chevron.right")
+                            }
+                            .font(.caption)
+                            .foregroundStyle(AppColors.mutedForeground)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
+
                     Spacer(minLength: 40)
                 }
             }
             .background(AppColors.background)
-            .navigationTitle("Letter Details")
+            .gesture(
+                DragGesture(minimumDistance: 50)
+                    .onEnded { value in
+                        let horizontal = value.translation.width
+                        let vertical = value.translation.height
+
+                        if abs(horizontal) > abs(vertical) {
+                            if horizontal < 0 && canGoNext {
+                                goToNext()
+                            } else if horizontal > 0 && canGoPrevious {
+                                goToPrevious()
+                            }
+                        }
+                    }
+            )
+            .navigationTitle("Letter \(letter.number)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -355,12 +427,12 @@ struct LetterDetailView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     ShareLink(item: "\(letter.title)\n\n\(letter.excerpt)\n\n- Letter \(letter.number) to \(letter.recipient)") {
                         Image(systemName: "square.and.arrow.up")
                     }
-                    
+
                     Menu {
                         Section("Font Size") {
                             Button("Small") { withAnimation { fontSize = 14 } }
@@ -375,7 +447,7 @@ struct LetterDetailView: View {
             }
         }
     }
-    
+
     private func categoryColor(for category: LetterCategory) -> Color {
         switch category {
         case .governance:
@@ -393,189 +465,6 @@ struct LetterDetailView: View {
         }
     }
 }
-
-// MARK: - Sample Data
-
-private let sampleLetters: [Letter] = [
-    Letter(
-        number: 53,
-        title: "Letter to Malik al-Ashtar",
-        recipient: "Malik al-Ashtar",
-        topic: "On governance and administration of Egypt",
-        excerpt: "Be it known to you, O Malik, that I am sending you as Governor to a country which in the past has experienced both just and unjust rule. People will watch your dealings as you used to watch the dealings of the rulers before you.",
-        content: """
-        Be it known to you, O Malik, that I am sending you as Governor to a country which in the past has experienced both just and unjust rule. People will watch your dealings as you used to watch the dealings of the rulers before you, and they will criticize you as you criticized them.
-        
-        Habituate your heart to mercy for the subjects and to affection and kindness for them. Do not stand over them like greedy beasts who feel it is enough to devour them, for they are of two kinds: either your brother in religion or one like you in creation.
-        
-        They will commit slips and encounter mistakes. They may act wrongly, willfully or by neglect. So extend to them your forgiveness and pardon, in the same way as you would like Allah to extend His forgiveness and pardon to you, for you are over them and your responsible Commander is over you while Allah is over him who has appointed you.
-        
-        He has sought you to manage their affairs and has tried you with them...
-        """,
-        category: .governance,
-        date: "38 AH"
-    ),
-    Letter(
-        number: 27,
-        title: "Instructions to Muhammad ibn Abi Bakr",
-        recipient: "Muhammad ibn Abi Bakr",
-        topic: "On dealing with the people of Egypt",
-        excerpt: "Know that the people are watching you with their eyes and listening to you with their ears. Every step you take will be scrutinized and every word you utter will be analyzed.",
-        content: """
-        To Muhammad ibn Abi Bakr, when appointed as Governor of Egypt:
-        
-        Know that the people are watching you with their eyes and listening to you with their ears. Every step you take will be scrutinized and every word you utter will be analyzed.
-        
-        Be just in your dealings and fair in your judgments. Do not let personal interests cloud your vision or bias affect your decisions. Remember that you are a servant of the people, not their master.
-        
-        Consult with the wise and learned among them, and do not be arrogant to accept good advice even from the lowliest among your subjects. Truth can come from any source, and wisdom is the lost property of the believer...
-        """,
-        category: .instruction,
-        date: "37 AH"
-    ),
-    Letter(
-        number: 31,
-        title: "Advice to His Son al-Hasan",
-        recipient: "Imam al-Hasan",
-        topic: "On life, faith, and wisdom",
-        excerpt: "My son, I advise you to fear Allah in privacy and in public, to speak the truth in pleasure and in anger, to be moderate in poverty and in wealth.",
-        content: """
-        From a father who is advancing in age, who has tasted the bitter changes of times, who is the victim of desires and the target of hardships, to a son who is heading towards the world where those before him have gone.
-        
-        My son, I advise you to fear Allah in privacy and in public, to speak the truth in pleasure and in anger, to be moderate in poverty and in wealth, and to be just to friend and foe.
-        
-        Know that the best of treasures is knowledge, the best of ornaments is good manners, and the best of worship is patience. Make your conscience the judge of your actions before others judge you.
-        
-        Remember that this world is a place of trial, not a place of settlement. You are a traveler here, and travelers must not become attached to the temporary shelters on their journey...
-        """,
-        category: .personal,
-        date: "40 AH"
-    ),
-    Letter(
-        number: 14,
-        title: "Instructions to the Army",
-        recipient: "Army Commanders",
-        topic: "Before the Battle of Siffin",
-        excerpt: "Do not fight them until they initiate the fighting, because by the grace of Allah, you are in the right and to leave them until they begin fighting will be another point in your favor.",
-        content: """
-        Instructions to the army before the Battle of Siffin:
-        
-        Do not fight them until they initiate the fighting, because by the grace of Allah, you are in the right and to leave them until they begin fighting will be another point in your favor.
-        
-        When you defeat them, do not kill those who flee, do not strike a helpless person, do not finish off the wounded, and do not inflict harm on women even though they may attack your honor with filthy words and abuse your officers.
-        
-        Remember that war is not for destruction but for reformation. Fight only those who fight you, and show mercy to those who seek it...
-        """,
-        category: .military,
-        date: "37 AH"
-    ),
-    Letter(
-        number: 41,
-        title: "To a Governor Who Misappropriated Funds",
-        recipient: "A Provincial Governor",
-        topic: "On betrayal of trust and misuse of public funds",
-        excerpt: "I have come to know that you have razed the ground and taken away whatever was under it and over it. Send me your account and know that the accounting to Allah will be severer than the accounting to the people.",
-        content: """
-        I have received disturbing reports about your governance and misuse of the public treasury.
-        
-        I have come to know that you have razed the ground and taken away whatever was under it and over it. You have devoured what was in your hands and have stored it for yourself.
-        
-        Send me your account immediately and know that the accounting to Allah will be severer than the accounting to the people. How can you enjoy the wealth that belongs to the orphans, the poor, and the needy?
-        
-        By Allah, even if Hassan and Hussain had done what you have done, there would have been no leniency with me for them, and they could not have changed my decision...
-        """,
-        category: .rebuke,
-        date: "39 AH"
-    ),
-    Letter(
-        number: 45,
-        title: "To Uthman ibn Hunayf",
-        recipient: "Uthman ibn Hunayf",
-        topic: "On attending a lavish feast",
-        excerpt: "You went to a feast of the wealthy where the poor were turned away and the rich were invited. Look at the morsels you chew. Throw away that about which you are doubtful and chew only that about which you are sure.",
-        content: """
-        O Ibn Hunayf, I have come to know that a young man of Basra invited you to a feast and you hastened to it. Foods of different colors were served to you and large bowls were put before you.
-        
-        I never thought that you would accept the feast of people where the poor are turned away and the rich are invited. Look at the morsels you chew. Throw away that about which you are doubtful and chew only that about which you are sure that it has been secured lawfully.
-        
-        Know that every follower has a leader whom he follows and from the effulgence of whose knowledge he takes light. Look at your Imam - I am satisfied with two worn garments and two loaves of bread. You cannot do this but at least support me in piety, exertion, chastity, and uprightness...
-        """,
-        category: .advice,
-        date: "38 AH"
-    ),
-    Letter(
-        number: 28,
-        title: "Reply to Mu'awiyah",
-        recipient: "Mu'awiyah ibn Abi Sufyan",
-        topic: "On justice and legitimacy",
-        excerpt: "You have claimed something which is not yours, you have opposed the people and have revolted against the community with the help of those who are misguided.",
-        content: """
-        In reply to Mu'awiyah's letter:
-        
-        You have claimed something which is not yours, you have opposed the people and have revolted against the community with the help of those who are misguided and the support of those whose hearts are diseased.
-        
-        You speak of justice but practice oppression. You claim to seek revenge for Uthman, but you only seek power for yourself. The blood you claim to avenge was not yours to claim, and the authority you seek was never yours to take.
-        
-        If you truly sought justice, you would submit to the legitimate authority chosen by the Muslims. But your ambition has blinded you to the truth...
-        """,
-        category: .rebuke,
-        date: "37 AH"
-    ),
-    Letter(
-        number: 22,
-        title: "To His Uncle Aqeel",
-        recipient: "Aqeel ibn Abi Talib",
-        topic: "On seeking special favors",
-        excerpt: "By Allah, I would rather pass a night in wakefulness on the thorns of as-sa'dan or be driven in chains as a prisoner than meet Allah and His Prophet on the Day of Judgment as an oppressor.",
-        content: """
-        My dear brother Aqeel,
-        
-        You came to me seeking more than your rightful share from the public treasury, thinking that your relationship to me would grant you special privilege.
-        
-        By Allah, I would rather pass a night in wakefulness on the thorns of as-sa'dan or be driven in chains as a prisoner than meet Allah and His Prophet on the Day of Judgment as an oppressor over any person or a usurper of any worldly wealth.
-        
-        How can I use the public treasury for personal favors when it belongs to all Muslims? Every dirham in it has an owner - the orphan, the poor, the traveler. I am merely a trustee, not an owner...
-        """,
-        category: .personal,
-        date: "38 AH"
-    ),
-    Letter(
-        number: 17,
-        title: "To the People of Kufa",
-        recipient: "People of Kufa",
-        topic: "On their support and responsibilities",
-        excerpt: "You are the supporters of truth and brothers in faith. You are the shield and the defense, the people of trust and the well-wishers.",
-        content: """
-        To the people of Kufa, the supporters of truth:
-        
-        You are the supporters of truth and brothers in faith. You are the shield and the defense, the people of trust and the well-wishers. With your support I hope to strike the deviated and the disobedient.
-        
-        Remember your covenant with Allah and your pledge to support justice. Do not let tribal loyalties divide you, nor let personal interests corrupt you. Stand firm in truth even if you stand alone.
-        
-        The trials ahead are many, but the reward for steadfastness is eternal. Support your Imam not for his person but for the truth he represents...
-        """,
-        category: .governance,
-        date: "36 AH"
-    ),
-    Letter(
-        number: 69,
-        title: "To al-Harith al-Hamdani",
-        recipient: "al-Harith al-Hamdani",
-        topic: "On dealing with worldly temptations",
-        excerpt: "Hold on to the rope of the Quran and seek instructions from it. Regard lawful what it regards lawful and regard unlawful what it regards unlawful.",
-        content: """
-        O Harith, hold firm to the Book of Allah and adhere to its guidance.
-        
-        Hold on to the rope of the Quran and seek instructions from it. Regard lawful what it regards lawful and regard unlawful what it regards unlawful. Testify to the right that has been in the past.
-        
-        Take lesson from the fate of past nations and previous generations. See how they rose and how they fell, how they prospered and how they perished. Do not be like them in their heedlessness.
-        
-        This world is like a shadow - when you try to catch it, it eludes you; when you turn away from it, it follows you. Do not make it your master, but do not neglect your duties in it...
-        """,
-        category: .advice,
-        date: "39 AH"
-    )
-]
 
 #Preview {
     NavigationStack {
