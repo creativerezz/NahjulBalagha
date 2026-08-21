@@ -136,6 +136,7 @@
 				CODE_SIGN_ENTITLEMENTS = NahjulBalagha/NahjulBalagha.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NahjulBalagha/Info.plist;
@@ -169,6 +170,7 @@
 				CODE_SIGN_ENTITLEMENTS = NahjulBalagha/NahjulBalagha.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NahjulBalagha/Info.plist;
