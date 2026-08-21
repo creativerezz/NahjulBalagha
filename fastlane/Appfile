@@ -1,0 +1,7 @@
+# Appfile for NahjulBalagha
+
+app_identifier("com.creativerez.NahjulBalagha") # The bundle identifier of your app
+apple_id("your-apple-id@example.com") # Your Apple Developer Portal email address
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

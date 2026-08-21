@@ -3,36 +3,46 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 110;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXFileReference section */
-		F53C94422FF2F41300786F14 /* NahjulBalagha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NahjulBalagha.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F508FB302E7F71CE0028FA82 /* NahjulBalagha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NahjulBalagha.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F53C944F2FF2F41400786F14 /* Exceptions for "NahjulBalagha" folder in "NahjulBalagha" target */ = {
+		F508FB532E7F71D00028FA82 /* Exceptions for "NahjulBalagha" folder in "NahjulBalagha" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = F53C94412FF2F41300786F14 /* NahjulBalagha */;
+			target = F508FB2F2E7F71CE0028FA82 /* NahjulBalagha */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		F53C94442FF2F41300786F14 /* NahjulBalagha */ = {
+		F508FB322E7F71CE0028FA82 /* NahjulBalagha */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F53C944F2FF2F41400786F14 /* Exceptions for "NahjulBalagha" folder in "NahjulBalagha" target */,
+				F508FB532E7F71D00028FA82 /* Exceptions for "NahjulBalagha" folder in "NahjulBalagha" target */,
 			);
 			path = NahjulBalagha;
+			sourceTree = "<group>";
+		};
+		F508FB442E7F71D00028FA82 /* NahjulBalaghaTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NahjulBalaghaTests;
+			sourceTree = "<group>";
+		};
+		F508FB4E2E7F71D00028FA82 /* NahjulBalaghaUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NahjulBalaghaUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		F53C943F2FF2F41300786F14 /* Frameworks */ = {
+		F508FB2D2E7F71CE0028FA82 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 			);
@@ -40,18 +50,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F53C94392FF2F41300786F14 = {
+		F508FB272E7F71CE0028FA82 = {
 			isa = PBXGroup;
 			children = (
-				F53C94442FF2F41300786F14 /* NahjulBalagha */,
-				F53C94432FF2F41300786F14 /* Products */,
+				F508FB322E7F71CE0028FA82 /* NahjulBalagha */,
+				F508FB442E7F71D00028FA82 /* NahjulBalaghaTests */,
+				F508FB4E2E7F71D00028FA82 /* NahjulBalaghaUITests */,
+				F508FB312E7F71CE0028FA82 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		F53C94432FF2F41300786F14 /* Products */ = {
+		F508FB312E7F71CE0028FA82 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F53C94422FF2F41300786F14 /* NahjulBalagha.app */,
+				F508FB302E7F71CE0028FA82 /* NahjulBalagha.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -59,60 +71,60 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F53C94412FF2F41300786F14 /* NahjulBalagha */ = {
+		F508FB2F2E7F71CE0028FA82 /* NahjulBalagha */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F53C94502FF2F41400786F14 /* Build configuration list for PBXNativeTarget "NahjulBalagha" */;
+			buildConfigurationList = F508FB542E7F71D00028FA82 /* Build configuration list for PBXNativeTarget "NahjulBalagha" */;
 			buildPhases = (
-				F53C943E2FF2F41300786F14 /* Sources */,
-				F53C943F2FF2F41300786F14 /* Frameworks */,
-				F53C94402FF2F41300786F14 /* Resources */,
+				F508FB2C2E7F71CE0028FA82 /* Sources */,
+				F508FB2D2E7F71CE0028FA82 /* Frameworks */,
+				F508FB2E2E7F71CE0028FA82 /* Resources */,
 			);
 			buildRules = (
 			);
 			fileSystemSynchronizedGroups = (
-				F53C94442FF2F41300786F14 /* NahjulBalagha */,
+				F508FB322E7F71CE0028FA82 /* NahjulBalagha */,
 			);
 			name = NahjulBalagha;
 			productName = NahjulBalagha;
-			productReference = F53C94422FF2F41300786F14 /* NahjulBalagha.app */;
+			productReference = F508FB302E7F71CE0028FA82 /* NahjulBalagha.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		F53C943A2FF2F41300786F14 /* Project object */ = {
+		F508FB282E7F71CE0028FA82 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2700;
-				LastUpgradeCheck = 2700;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					F53C94412FF2F41300786F14 = {
-						CreatedOnToolsVersion = 27.0;
+					F508FB2F2E7F71CE0028FA82 = {
+						CreatedOnToolsVersion = 26.0;
 					};
 				};
 			};
-			buildConfigurationList = F53C943D2FF2F41300786F14 /* Build configuration list for PBXProject "NahjulBalagha" */;
+			buildConfigurationList = F508FB2B2E7F71CE0028FA82 /* Build configuration list for PBXProject "NahjulBalagha" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = F53C94392FF2F41300786F14;
+			mainGroup = F508FB272E7F71CE0028FA82;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
-			productRefGroup = F53C94432FF2F41300786F14 /* Products */;
+			preferredProjectObjectVersion = 90;
+			productRefGroup = F508FB312E7F71CE0028FA82 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F53C94412FF2F41300786F14 /* NahjulBalagha */,
+				F508FB2F2E7F71CE0028FA82 /* NahjulBalagha */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		F53C94402FF2F41300786F14 /* Resources */ = {
+		F508FB2E2E7F71CE0028FA82 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -120,7 +132,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		F53C943E2FF2F41300786F14 /* Sources */ = {
+		F508FB2C2E7F71CE0028FA82 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
@@ -128,75 +140,89 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		F53C94512FF2F41400786F14 /* Debug configuration for PBXNativeTarget "NahjulBalagha" */ = {
+		F508FB552E7F71D00028FA82 /* Debug configuration for PBXNativeTarget "NahjulBalagha" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NahjulBalagha/NahjulBalagha.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NahjulBalagha/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NahjulBalagha;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.peakofeloquence.NahjulBalagha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.creativerez.NahjulBalagha;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		F53C94522FF2F41400786F14 /* Release configuration for PBXNativeTarget "NahjulBalagha" */ = {
+		F508FB562E7F71D00028FA82 /* Release configuration for PBXNativeTarget "NahjulBalagha" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = NahjulBalagha/NahjulBalagha.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NahjulBalagha/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NahjulBalagha;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.peakofeloquence.NahjulBalagha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.creativerez.NahjulBalagha;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
-		F53C94532FF2F41400786F14 /* Debug configuration for PBXProject "NahjulBalagha" */ = {
+		F508FB572E7F71D00028FA82 /* Debug configuration for PBXProject "NahjulBalagha" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -231,6 +257,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -248,18 +275,19 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		F53C94542FF2F41400786F14 /* Release configuration for PBXProject "NahjulBalagha" */ = {
+		F508FB582E7F71D00028FA82 /* Release configuration for PBXProject "NahjulBalagha" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -294,6 +322,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = G56KC8CS7Z;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -305,11 +334,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -318,24 +349,23 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F53C943D2FF2F41300786F14 /* Build configuration list for PBXProject "NahjulBalagha" */ = {
+		F508FB2B2E7F71CE0028FA82 /* Build configuration list for PBXProject "NahjulBalagha" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F53C94532FF2F41400786F14 /* Debug configuration for PBXProject "NahjulBalagha" */,
-				F53C94542FF2F41400786F14 /* Release configuration for PBXProject "NahjulBalagha" */,
+				F508FB572E7F71D00028FA82 /* Debug configuration for PBXProject "NahjulBalagha" */,
+				F508FB582E7F71D00028FA82 /* Release configuration for PBXProject "NahjulBalagha" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		F53C94502FF2F41400786F14 /* Build configuration list for PBXNativeTarget "NahjulBalagha" */ = {
+		F508FB542E7F71D00028FA82 /* Build configuration list for PBXNativeTarget "NahjulBalagha" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F53C94512FF2F41400786F14 /* Debug configuration for PBXNativeTarget "NahjulBalagha" */,
-				F53C94522FF2F41400786F14 /* Release configuration for PBXNativeTarget "NahjulBalagha" */,
+				F508FB552E7F71D00028FA82 /* Debug configuration for PBXNativeTarget "NahjulBalagha" */,
+				F508FB562E7F71D00028FA82 /* Release configuration for PBXNativeTarget "NahjulBalagha" */,
 			);
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = F53C943A2FF2F41300786F14 /* Project object */;
-	validationLevel = 1;
+	rootObject = F508FB282E7F71CE0028FA82 /* Project object */;
 }

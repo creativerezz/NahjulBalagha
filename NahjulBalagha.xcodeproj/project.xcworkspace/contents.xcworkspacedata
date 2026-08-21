@@ -4,4 +4,10 @@
    <FileRef
       location = "self:">
    </FileRef>
+   <FileRef
+      location = "group:review.md">
+   </FileRef>
+   <FileRef
+      location = "group:TODO.md">
+   </FileRef>
 </Workspace>

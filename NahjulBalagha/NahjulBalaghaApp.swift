@@ -1,3 +1,10 @@
+//
+//  NahjulBalaghaApp.swift
+//  NahjulBalagha
+//
+//  Created by Reza Jafar on 9/20/25.
+//
+
 import SwiftUI
 
 @main
